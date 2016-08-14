@@ -57,19 +57,19 @@
             this.settings = new PrimitiveCreator.Settings();
 
             this.settings.PrimitiveType = (PrimitiveType)
-                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.Color);
+                EditorPrefs.GetInt(PrimitiveCreatorPrefKeys.Color);
 
-            this.settings.UniformScale = PlayerPrefs.GetFloat(PrimitiveCreatorPrefKeys.UniformScale);
+            this.settings.UniformScale = EditorPrefs.GetFloat(PrimitiveCreatorPrefKeys.UniformScale);
 
             this.settings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
-                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.PrimitiveType);
+                EditorPrefs.GetInt(PrimitiveCreatorPrefKeys.PrimitiveType);
         }
 
         private void SaveSettings()
         {
-            PlayerPrefs.SetInt(PrimitiveCreatorPrefKeys.Color, (int)this.settings.PrimitiveType);
-            PlayerPrefs.SetFloat(PrimitiveCreatorPrefKeys.UniformScale, this.settings.UniformScale);
-            PlayerPrefs.SetInt(PrimitiveCreatorPrefKeys.PrimitiveType, (int)this.settings.Color);
+            EditorPrefs.SetInt(PrimitiveCreatorPrefKeys.Color, (int)this.settings.PrimitiveType);
+            EditorPrefs.SetFloat(PrimitiveCreatorPrefKeys.UniformScale, this.settings.UniformScale);
+            EditorPrefs.SetInt(PrimitiveCreatorPrefKeys.PrimitiveType, (int)this.settings.Color);
         }
     }
 }
