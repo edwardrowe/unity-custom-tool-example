@@ -16,12 +16,13 @@
 
         public static GameObject CreatePrimitive(Settings primitiveSettings)
         {
-            var cube = GameObject.CreatePrimitive(primitiveSettings.PrimitiveType);
-            cube.transform.localScale = new Vector3(
+            var shape = GameObject.CreatePrimitive(primitiveSettings.PrimitiveType);
+            shape.transform.localScale = new Vector3(
                 primitiveSettings.UniformScale,
                 primitiveSettings.UniformScale,
                 primitiveSettings.UniformScale);
 
+            // Assign the material for the new object
             var materialResourcePath = materialPaths[primitiveSettings.Color];
             var material = (Material)Resources.Load(materialResourcePath);
             if (material == null)
@@ -32,9 +33,9 @@
                 return null;
             }
 
-            cube.GetComponent<Renderer>().material = material;
+            shape.GetComponent<Renderer>().material = material;
 
-            return cube;
+            return shape;
         }
 
         public class Settings

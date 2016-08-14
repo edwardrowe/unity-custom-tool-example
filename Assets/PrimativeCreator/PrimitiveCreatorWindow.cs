@@ -6,7 +6,10 @@
 
     public class PrimitiveCreatorWindow : EditorWindow
     {
-        private PrimitiveCreator.Settings currentSettings;
+        private PrimitiveCreator.Settings settings;
+        private GUIContent primitiveTypeLabel;
+        private GUIContent uniformScaleLabel;
+        private GUIContent colorLabel;
 
         [MenuItem("Window/Primitive Creator")]
         public static void ShowCubeCreatorWindow()
@@ -16,28 +19,31 @@
 
         public void OnEnable()
         {
-            this.currentSettings = new PrimitiveCreator.Settings();
+            this.settings = new PrimitiveCreator.Settings();
+
+            this.primitiveTypeLabel = new GUIContent("Primitive");
+            this.uniformScaleLabel = new GUIContent("Uniform Scale");
+            this.colorLabel = new GUIContent("Color");
         }
 
         public void OnGUI()
         {
-            this.currentSettings.PrimitiveType = 
-                (UnityEngine.PrimitiveType)EditorGUILayout.EnumPopup(
-                new GUIContent("Primitive"),
-                this.currentSettings.PrimitiveType);
+            this.settings.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
+                this.primitiveTypeLabel,
+                this.settings.PrimitiveType);
 
-            this.currentSettings.UniformScale = EditorGUILayout.FloatField(
-                new GUIContent("Uniform Scale"),
-                this.currentSettings.UniformScale);
+            this.settings.UniformScale = EditorGUILayout.FloatField(
+                this.uniformScaleLabel,
+                this.settings.UniformScale);
         
-            this.currentSettings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
-                EditorGUILayout.EnumPopup(new GUIContent("Color"), this.currentSettings.Color);
+            this.settings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
+                EditorGUILayout.EnumPopup(this.colorLabel, this.settings.Color);
 
             if (GUILayout.Button("Create Primitive"))
             {
-                GameObject cube = PrimitiveCreator.CreatePrimitive(this.currentSettings);
+                GameObject shape = PrimitiveCreator.CreatePrimitive(this.settings);
 
-                Selection.activeGameObject = cube;
+                Selection.activeGameObject = shape;
             }
         }
     }
