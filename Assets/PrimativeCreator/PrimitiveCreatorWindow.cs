@@ -12,21 +12,34 @@
         private GUIContent colorLabel;
 
         [MenuItem("Window/Primitive Creator")]
-        public static void ShowCubeCreatorWindow()
+        private static void ShowCubeCreatorWindow()
         {
             EditorWindow.GetWindow<PrimitiveCreatorWindow>("Primitive Creator");
         }
 
-        public void OnEnable()
+        private void OnEnable()
         {
-            this.settings = new PrimitiveCreator.Settings();
+            this.LoadLastSettings();
 
             this.primitiveTypeLabel = new GUIContent("Primitive");
             this.uniformScaleLabel = new GUIContent("Uniform Scale");
             this.colorLabel = new GUIContent("Color");
         }
 
-        public void OnGUI()
+        private void LoadLastSettings()
+        {
+            this.settings = new PrimitiveCreator.Settings();
+
+            this.settings.PrimitiveType = (PrimitiveType)
+                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.Color);
+            
+            this.settings.UniformScale = PlayerPrefs.GetFloat(PrimitiveCreatorPrefKeys.UniformScale);
+
+            this.settings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
+                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.PrimitiveType);
+        }
+
+        private void OnGUI()
         {
             this.settings.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
                 this.primitiveTypeLabel,
@@ -45,6 +58,15 @@
 
                 Selection.activeGameObject = shape;
             }
+
+            this.SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            PlayerPrefs.SetInt(PrimitiveCreatorPrefKeys.Color, (int)this.settings.PrimitiveType);
+            PlayerPrefs.SetFloat(PrimitiveCreatorPrefKeys.UniformScale, this.settings.UniformScale);
+            PlayerPrefs.SetInt(PrimitiveCreatorPrefKeys.PrimitiveType, (int)this.settings.Color);
         }
     }
 }
