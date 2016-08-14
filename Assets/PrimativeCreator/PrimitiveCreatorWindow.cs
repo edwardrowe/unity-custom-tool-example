@@ -19,28 +19,18 @@
 
         private void OnEnable()
         {
-            this.LoadLastSettings();
-
             this.primitiveTypeLabel = new GUIContent("Primitive");
             this.uniformScaleLabel = new GUIContent("Uniform Scale");
             this.colorLabel = new GUIContent("Color");
         }
 
-        private void LoadLastSettings()
-        {
-            this.settings = new PrimitiveCreator.Settings();
-
-            this.settings.PrimitiveType = (PrimitiveType)
-                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.Color);
-            
-            this.settings.UniformScale = PlayerPrefs.GetFloat(PrimitiveCreatorPrefKeys.UniformScale);
-
-            this.settings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
-                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.PrimitiveType);
-        }
-
         private void OnGUI()
         {
+            if (this.settings == null)
+            {
+                this.LoadLastSettings();
+            }
+
             this.settings.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
                 this.primitiveTypeLabel,
                 this.settings.PrimitiveType);
@@ -60,6 +50,19 @@
             }
 
             this.SaveSettings();
+        }
+
+        private void LoadLastSettings()
+        {
+            this.settings = new PrimitiveCreator.Settings();
+
+            this.settings.PrimitiveType = (PrimitiveType)
+                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.Color);
+
+            this.settings.UniformScale = PlayerPrefs.GetFloat(PrimitiveCreatorPrefKeys.UniformScale);
+
+            this.settings.Color = (PrimitiveCreator.Settings.PrimitiveColor)
+                PlayerPrefs.GetInt(PrimitiveCreatorPrefKeys.PrimitiveType);
         }
 
         private void SaveSettings()
