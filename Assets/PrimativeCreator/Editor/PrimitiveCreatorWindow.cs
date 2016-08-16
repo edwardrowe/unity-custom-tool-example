@@ -14,9 +14,17 @@
 
         private GUIContent[] configPresetsNames;
         private GUIContent savedConfigLabel;
+
+        private GUIContent configHeaderLabel;
         private GUIContent primitiveTypeLabel;
         private GUIContent uniformScaleLabel;
         private GUIContent colorLabel;
+
+        private GUIContent saveButtonLabel;
+        private GUIContent renameButtonLabel;
+        private GUIContent deleteButtonLabel;
+
+        private GUIContent createPrimitiveButtonLabel;
 
         [MenuItem("Window/Primitive Creator")]
         private static void ShowCubeCreatorWindow()
@@ -29,10 +37,18 @@
             this.LoadSaveData();
             this.LoadConfigFromPreferences();
 
-            this.savedConfigLabel = new GUIContent("Config Preset");
+            this.savedConfigLabel = new GUIContent("Selected Preset");
+
+            this.configHeaderLabel = new GUIContent("Primitive Configuration");
             this.primitiveTypeLabel = new GUIContent("Primitive");
             this.uniformScaleLabel = new GUIContent("Uniform Scale");
             this.colorLabel = new GUIContent("Color");
+
+            this.saveButtonLabel = new GUIContent("Save");
+            this.renameButtonLabel = new GUIContent("Rename");
+            this.deleteButtonLabel = new GUIContent("Delete");
+
+            this.createPrimitiveButtonLabel = new GUIContent("Create Primitive");
         }
 
         private void OnGUI()
@@ -51,7 +67,7 @@
             }
 
             EditorGUI.BeginDisabledGroup(this.saveData.HasConfigForIndex(this.selectedConfigPreset));
-            if (GUILayout.Button("Save"))
+            if (GUILayout.Button(this.saveButtonLabel))
             {
                 var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Name Preset");
 
@@ -68,7 +84,7 @@
             EditorGUI.EndDisabledGroup();
 
             EditorGUI.BeginDisabledGroup(!this.saveData.HasConfigForIndex(this.selectedConfigPreset));
-            if (GUILayout.Button("Rename"))
+            if (GUILayout.Button(this.renameButtonLabel))
             {
                 var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Rename Preset",
                                            this.currentConfig.Name);
@@ -80,7 +96,7 @@
                     });
             }
 
-            if (GUILayout.Button("Delete"))
+            if (GUILayout.Button(this.deleteButtonLabel))
             {
                 this.saveData.ConfigPresets.Remove(this.currentConfig);
                 this.selectedConfigPreset = this.saveData.ConfigPresets.Count;
@@ -93,6 +109,7 @@
 
             EditorGUILayout.Space();
 
+            EditorGUILayout.LabelField(this.configHeaderLabel, EditorStyles.boldLabel);
             this.currentConfig.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
                 this.primitiveTypeLabel,
                 this.currentConfig.PrimitiveType);
@@ -106,7 +123,7 @@
             
             EditorGUILayout.Space();
 
-            if (GUILayout.Button("Create Primitive"))
+            if (GUILayout.Button(this.createPrimitiveButtonLabel))
             {
                 GameObject shape = PrimitiveCreator.CreatePrimitive(this.currentConfig);
 
