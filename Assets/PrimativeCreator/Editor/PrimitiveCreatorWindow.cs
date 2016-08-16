@@ -14,7 +14,6 @@
 
         private GUIContent[] configPresetsNames;
         private GUIContent savedConfigLabel;
-        private GUIContent presetNameLabel;
         private GUIContent primitiveTypeLabel;
         private GUIContent uniformScaleLabel;
         private GUIContent colorLabel;
@@ -31,7 +30,6 @@
             this.LoadConfigFromPreferences();
 
             this.savedConfigLabel = new GUIContent("Config Preset");
-            this.presetNameLabel = new GUIContent("Preset Name");
             this.primitiveTypeLabel = new GUIContent("Primitive");
             this.uniformScaleLabel = new GUIContent("Uniform Scale");
             this.colorLabel = new GUIContent("Color");
@@ -55,10 +53,7 @@
             EditorGUI.BeginDisabledGroup(this.saveData.HasConfigForIndex(this.selectedConfigPreset));
             if (GUILayout.Button("Save"))
             {
-                var namePresetWindow = EditorWindow.GetWindow<PrimitiveCreatorNamePresetWindow>(
-                                           true, 
-                                           "Name Preset", 
-                                           true);
+                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Name Preset");
 
                 namePresetWindow.NameSaved.AddListener((string name) =>
                     {
@@ -75,10 +70,8 @@
             EditorGUI.BeginDisabledGroup(!this.saveData.HasConfigForIndex(this.selectedConfigPreset));
             if (GUILayout.Button("Rename"))
             {
-                var namePresetWindow = EditorWindow.GetWindow<PrimitiveCreatorNamePresetWindow>(
-                                           true, 
-                                           "Rename Preset", 
-                                           true);
+                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Rename Preset",
+                                           this.currentConfig.Name);
 
                 namePresetWindow.NameSaved.AddListener((string name) =>
                     {

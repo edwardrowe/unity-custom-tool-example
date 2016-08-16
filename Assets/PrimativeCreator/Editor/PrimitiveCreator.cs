@@ -17,10 +17,7 @@
         public static GameObject CreatePrimitive(Config primitiveConfig)
         {
             var shape = GameObject.CreatePrimitive(primitiveConfig.PrimitiveType);
-            shape.transform.localScale = new Vector3(
-                primitiveConfig.UniformScale,
-                primitiveConfig.UniformScale,
-                primitiveConfig.UniformScale);
+            shape.transform.localScale = Vector3.one * primitiveConfig.UniformScale;
 
             // Assign the material for the new object
             var materialResourcePath = materialPaths[primitiveConfig.Color];

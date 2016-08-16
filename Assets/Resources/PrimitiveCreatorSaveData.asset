@@ -11,8 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8243ad7f1c30400cb0f140393322337, type: 3}
   m_Name: PrimitiveCreatorSaveData
   m_EditorClassIdentifier: 
-  ConfigPresets:
-  - Name: BarackObama
-    PrimitiveType: 2
-    Color: 2
-    UniformScale: 3
+  ConfigPresets: []
