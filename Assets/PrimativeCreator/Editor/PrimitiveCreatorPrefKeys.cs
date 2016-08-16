@@ -12,6 +12,14 @@
     {
         private const string PreferencePrefix = "PrimitiveCreator/";
 
+        public static string PreviousConfigIndex
+        {
+            get
+            {
+                return string.Concat(PreferencePrefix, ProjectID, "PreviousConfigIndex");
+            }
+        }
+
         public static string UniformScale
         {
             get

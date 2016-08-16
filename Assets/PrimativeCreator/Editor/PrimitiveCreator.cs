@@ -6,24 +6,24 @@
 
     public class PrimitiveCreator
     {
-        private static readonly Dictionary<Settings.PrimitiveColor, string> materialPaths =
-            new Dictionary<Settings.PrimitiveColor, string>()
+        private static readonly Dictionary<Config.PrimitiveColor, string> materialPaths =
+            new Dictionary<Config.PrimitiveColor, string>()
             {
-                { Settings.PrimitiveColor.Red, "Red" },
-                { Settings.PrimitiveColor.Green, "Green" },
-                { Settings.PrimitiveColor.Blue, "Blue" }
+                { Config.PrimitiveColor.Red, "Red" },
+                { Config.PrimitiveColor.Green, "Green" },
+                { Config.PrimitiveColor.Blue, "Blue" }
             };
 
-        public static GameObject CreatePrimitive(Settings primitiveSettings)
+        public static GameObject CreatePrimitive(Config primitiveConfig)
         {
-            var shape = GameObject.CreatePrimitive(primitiveSettings.PrimitiveType);
+            var shape = GameObject.CreatePrimitive(primitiveConfig.PrimitiveType);
             shape.transform.localScale = new Vector3(
-                primitiveSettings.UniformScale,
-                primitiveSettings.UniformScale,
-                primitiveSettings.UniformScale);
+                primitiveConfig.UniformScale,
+                primitiveConfig.UniformScale,
+                primitiveConfig.UniformScale);
 
             // Assign the material for the new object
-            var materialResourcePath = materialPaths[primitiveSettings.Color];
+            var materialResourcePath = materialPaths[primitiveConfig.Color];
             var material = (Material)Resources.Load(materialResourcePath);
             if (material == null)
             {
@@ -38,8 +38,10 @@
             return shape;
         }
 
-        public class Settings
+        [System.Serializable]
+        public class Config
         {
+            public string Name;
             public UnityEngine.PrimitiveType PrimitiveType;
             public PrimitiveColor Color;
             public float UniformScale = 1.0f;
