@@ -8,6 +8,14 @@
     {
         public List<PrimitiveCreator.Config> ConfigPresets;
 
+        private void OnEnable()
+        {
+            if (this.ConfigPresets == null)
+            {
+                this.ConfigPresets = new List<PrimitiveCreator.Config>();
+            }
+        }
+
         public bool HasConfigForIndex(int index)
         {
             if (this.ConfigPresets == null || this.ConfigPresets.Count == 0)
