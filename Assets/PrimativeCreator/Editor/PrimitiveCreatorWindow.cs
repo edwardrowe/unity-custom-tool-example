@@ -53,73 +53,11 @@
 
         private void OnGUI()
         {
-            EditorGUILayout.BeginHorizontal();
-
-            EditorGUI.BeginChangeCheck();
-            this.selectedConfigPreset = EditorGUILayout.Popup(
-                this.savedConfigLabel,
-                selectedConfigPreset,
-                this.configPresetsNames);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                this.LoadConfigPresetByIndex(this.selectedConfigPreset);
-            }
-
-            EditorGUI.BeginDisabledGroup(this.saveData.HasConfigForIndex(this.selectedConfigPreset));
-            if (GUILayout.Button(this.saveButtonLabel))
-            {
-                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Name Preset");
-
-                namePresetWindow.NameSaved.AddListener((string name) =>
-                    {
-                        this.currentConfig.Name = name;
-                        this.saveData.ConfigPresets.Add(this.currentConfig);
-                        this.PopulateConfigPresetsDropdown();
-
-                        this.selectedConfigPreset = this.saveData.ConfigPresets.Count - 1;
-                        this.LoadConfigPresetByIndex(this.selectedConfigPreset);
-                    });
-            }
-            EditorGUI.EndDisabledGroup();
-
-            EditorGUI.BeginDisabledGroup(!this.saveData.HasConfigForIndex(this.selectedConfigPreset));
-            if (GUILayout.Button(this.renameButtonLabel))
-            {
-                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Rename Preset",
-                                           this.currentConfig.Name);
-
-                namePresetWindow.NameSaved.AddListener((string name) =>
-                    {
-                        this.currentConfig.Name = name;
-                        this.PopulateConfigPresetsDropdown();
-                    });
-            }
-
-            if (GUILayout.Button(this.deleteButtonLabel))
-            {
-                this.saveData.ConfigPresets.Remove(this.currentConfig);
-                this.selectedConfigPreset = this.saveData.ConfigPresets.Count;
-                this.PopulateConfigPresetsDropdown();
-                this.LoadConfigPresetByIndex(this.selectedConfigPreset);
-            }
-
-            EditorGUI.EndDisabledGroup();
-            EditorGUILayout.EndHorizontal();
+            this.DrawConfigPresetSelectionGUI();
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField(this.configHeaderLabel, EditorStyles.boldLabel);
-            this.currentConfig.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
-                this.primitiveTypeLabel,
-                this.currentConfig.PrimitiveType);
-
-            this.currentConfig.UniformScale = EditorGUILayout.FloatField(
-                this.uniformScaleLabel,
-                this.currentConfig.UniformScale);
-        
-            this.currentConfig.Color = (PrimitiveCreator.Config.PrimitiveColor)
-                EditorGUILayout.EnumPopup(this.colorLabel, this.currentConfig.Color);
+            this.DrawConfigGUI();
             
             EditorGUILayout.Space();
 
@@ -131,6 +69,89 @@
             }
 
             this.SaveSettings();
+        }
+
+        private void DrawConfigPresetSelectionGUI()
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            // Check for changes so that we can load in the new Config as it's selected.
+            EditorGUI.BeginChangeCheck();
+            this.selectedConfigPreset = EditorGUILayout.Popup(
+                this.savedConfigLabel,
+                selectedConfigPreset,
+                this.configPresetsNames);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                this.LoadConfigPresetByIndex(this.selectedConfigPreset);
+            }
+
+            var isConfigPresetSelected = this.saveData.HasConfigForIndex(this.selectedConfigPreset);
+            EditorGUI.BeginDisabledGroup(isConfigPresetSelected);
+            if (GUILayout.Button(this.saveButtonLabel))
+            {
+                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Name Preset");
+
+                namePresetWindow.NameSaved.AddListener(SaveSelectedPreset);
+            }
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUI.BeginDisabledGroup(!isConfigPresetSelected);
+            if (GUILayout.Button(this.renameButtonLabel))
+            {
+                var namePresetWindow = PrimitiveCreatorNamePresetWindow.Show("Rename Preset",
+                                           this.currentConfig.Name);
+
+                namePresetWindow.NameSaved.AddListener(RenameSelectedPreset);
+            }
+
+            if (GUILayout.Button(this.deleteButtonLabel))
+            {
+                this.DeleteSelectedPreset();
+            }
+
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void SaveSelectedPreset(string name)
+        {
+            this.currentConfig.Name = name;
+            this.saveData.ConfigPresets.Add(this.currentConfig);
+            this.PopulateConfigPresetsDropdown();
+
+            this.selectedConfigPreset = this.saveData.ConfigPresets.Count - 1;
+            this.LoadConfigPresetByIndex(this.selectedConfigPreset);
+        }
+
+        private void RenameSelectedPreset(string name)
+        {
+            this.currentConfig.Name = name;
+            this.PopulateConfigPresetsDropdown();
+        }
+
+        private void DeleteSelectedPreset()
+        {
+            this.saveData.ConfigPresets.Remove(this.currentConfig);
+            this.selectedConfigPreset = this.saveData.ConfigPresets.Count;
+            this.PopulateConfigPresetsDropdown();
+            this.LoadConfigPresetByIndex(this.selectedConfigPreset);
+        }
+
+        private void DrawConfigGUI()
+        {
+            EditorGUILayout.LabelField(this.configHeaderLabel, EditorStyles.boldLabel);
+            this.currentConfig.PrimitiveType = (PrimitiveType)EditorGUILayout.EnumPopup(
+                this.primitiveTypeLabel,
+                this.currentConfig.PrimitiveType);
+
+            this.currentConfig.UniformScale = EditorGUILayout.FloatField(
+                this.uniformScaleLabel,
+                this.currentConfig.UniformScale);
+
+            this.currentConfig.Color = (PrimitiveCreator.Config.PrimitiveColor)
+                EditorGUILayout.EnumPopup(this.colorLabel, this.currentConfig.Color);
         }
 
         private void LoadSaveData()
@@ -170,6 +191,7 @@
             }
             else
             {
+                // When no config data is found, use whatever the user last entered in
                 this.currentConfig = new PrimitiveCreator.Config();
 
                 this.currentConfig.PrimitiveType = (PrimitiveType)
@@ -186,6 +208,7 @@
         {
             EditorPrefs.SetInt(PrimitiveCreatorPrefKeys.PreviousConfigIndex, this.selectedConfigPreset);
 
+            // Remember what the user last entered for unsaved presets
             if (!this.saveData.HasConfigForIndex(this.selectedConfigPreset))
             {
                 EditorPrefs.SetInt(PrimitiveCreatorPrefKeys.Color, (int)this.currentConfig.PrimitiveType);
